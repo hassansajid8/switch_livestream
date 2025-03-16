@@ -1,0 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Potta+One&family=Staatliches&display=swap');
+
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+
+@theme {
+    --color-secondary: #142F43;
+    --color-primary: #FFAB4C;
+    --color-accent: #FF5F7E;
+    --color-accent-dark: #bc455d;
+    --color-pop: #9200d1; 
+    --color-bg: #EBE9F4;
+
+    --font-funk: "Potta One", cursive;
+    --font-sans: "DM Sans", sans-serif;
+    --font-tall: "Staatliches", serif; 
+}
+
+br {
+    color: #bc455d;
+}
