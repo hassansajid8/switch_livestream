@@ -8,9 +8,10 @@
     --color-secondary: #142F43;
     --color-primary: #FFAB4C;
     --color-accent: #FF5F7E;
-    --color-accent-dark: #bc455d;
+    --color-accent-dark: #ce4c66;
     --color-pop: #9200d1; 
     --color-bg: #EBE9F4;
+    --color-black-trans: #0000005f;
 
     --font-funk: "Potta One", cursive;
     --font-sans: "DM Sans", sans-serif;
@@ -18,5 +19,5 @@
 }
 
 br {
-    color: #bc455d;
+    color: #dbd9e4;
 }

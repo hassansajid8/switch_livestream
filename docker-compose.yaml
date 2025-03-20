@@ -13,14 +13,14 @@ services:
     build: ./auth
     container_name: auth_server
 
-  client:
-    build: ./client
-    ports:
-      - "3000:3000"
-    container_name: client
+#  client:
+#    build: ./client
+#    ports:
+#      - "3000:3000"
+#    container_name: client
 
   database:
-    image: postgres:15-alpine
+    image: postgres:15
     container_name: switch_db
     restart: always
     ports:
