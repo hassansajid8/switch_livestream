@@ -1,5 +1,7 @@
 import { PrismaClient } from "@prisma/client";
+import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt";
+import { SECRET_KEY } from "$env/static/private";
 
 const prisma = new PrismaClient();
 
@@ -25,9 +27,26 @@ export async function POST (event) {
             );
         }
 
+        const payload = {
+            id: user.id,
+            username: user.username,
+        };
+
+        const token = jwt.sign(payload, SECRET_KEY);
+
+        event.cookies.set('token', token, {
+            path: '/',
+            httpOnly: true,
+            sameSite: 'strict',
+            secure: process.env.NODE_ENV === "production",
+            maxAge: 60 * 60 * 24 * 7
+        });
+
         return new Response(
             JSON.stringify({ message: "Logged in" }),
-            {status: 200, headers: { 'Content-Type': 'application/json' }},
+            {status: 200, headers: { 
+                'Content-Type': 'application/json',
+             }},
         );
     } catch (e: any) {
         console.log("Some error occurred: ", e);

@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import Hls from 'hls.js';
 
-	export let stream: Array;
+	export let stream: any;
 
 	let video_elem: HTMLVideoElement;
 
@@ -23,7 +23,7 @@
 				console.error('HLS.js error:', data);
 			});
 		} else if (video_elem.canPlayType('application/vnd.apple.mpegurl')) {
-			video_elem.src = `https://localhost:8080/hls/${stream?.username}.m3u8`;
+			video_elem.src = `http://localhost:8080/rtmp/hls/${stream?.username}.m3u8`;
 		}
 	});
 

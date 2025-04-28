@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client"
+import type { Actions } from "@sveltejs/kit";
 
 
 const prisma = new PrismaClient();

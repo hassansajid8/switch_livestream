@@ -1,6 +1,8 @@
 <script lang="ts">
     import Icon from "@iconify/svelte";
     import { shared } from "$lib/shared.svelte";
+	import { createToast, ToastType } from "$lib/store";
+	import { goto } from "$app/navigation";
 
     let username = '';
     let password = '';
@@ -24,22 +26,40 @@
 
         if(response.status == 404){
             console.log("User not found");
+            createToast({
+                text: "User not found. You might want to register",
+                type: ToastType.ERROR
+            });
             return;
         }
 
         if(response.status == 401){
             console.log("Incorrect password");
+            createToast({
+                text: "Invalid credentials. Please try again.",
+                type: ToastType.ERROR
+            });
             return;
         }
 
         if(!response.ok){
             console.log("Some error occurred");
+            createToast({
+                text: "Some error occurred. Please try again.",
+                type: ToastType.ERROR
+            });
             return;
         }
 
         const result = await response.json();
 
-        console.log(result.message);
+        createToast({
+            text: "Logged in successfully.",
+            type: ToastType.SUCCESS
+        });
+
+        shared.showLoginDialog = false;
+        shared.isAuth = true;
     }
 </script>
 
@@ -72,19 +92,11 @@
                 </div>
         </form>
         </div>
-        <div class="image inset-shadow md:w-32 rounded-r"></div>
         </div>
 
     </div>
 </div>
 
 <style>
-    .image{
-        background-image: url("bg-register.jpg");
-    }
-    
-    .inset-shadow {
-        box-shadow: inset 3px 0px 10px 0px black;
-    }
 
 </style>

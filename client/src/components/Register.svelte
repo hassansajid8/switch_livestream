@@ -1,6 +1,7 @@
 <script lang="ts">
     import Icon from "@iconify/svelte";
     import { shared } from "$lib/shared.svelte";
+	import { createToast, ToastType } from "$lib/store";
 
     let username = "";
     let password = "";
@@ -9,11 +10,18 @@
     async function send() {
         if(!username || !password || !re_password){
             console.log("Fill the entire form!");
+            createToast({
+                type: ToastType.WARNING,
+                text: "All fields are required."
+            });
             return;
         }
 
         if(password != re_password){
-            console.log("Passwords do not match");
+            createToast({
+                type: ToastType.WARNING,
+                text: "Passwords do not match."
+            });
             return;
         }
 
@@ -23,8 +31,6 @@
         };
 
         try{
-            console.log("Sending to /api/register");
-
             const response = await fetch('/api/register', {
                 method: "POST",
                 headers: {
@@ -34,80 +40,96 @@
             });
 
             if(!response){
-                console.log("Err: No response recieved");
-                return;
-            }
-
-            if(response.status == 401){
-                console.log("Incorrect Password");
+                createToast({
+                    type: ToastType.ERROR,
+                    text: "Some error occurred. Please Try again"
+                });
                 return;
             }
 
             if(response.status == 403) {
-                console.log("User already exists. Login instead");
+                createToast({
+                    type: ToastType.ERROR,
+                    text: "User already exists. Please Login."
+                });
                 return;
             }
 
             if(!response.ok) {
-                console.log("Some error occurred");
+                createToast({
+                    type: ToastType.ERROR,
+                    text: "Some error occurred. Please Try again"
+                });
+                return;
             }
     
-            const result = await response.json();
-    
-            console.log(result);
+            createToast({
+                    type: ToastType.SUCCESS,
+                    text: "Registered Successfully. Please Login to continue."
+            });
+
+            shared.showRegisterDialog = false;
+            shared.showLoginDialog = true;
+
         } catch (e) {
-            console.log("Some error occurred: ", e);
+            createToast({
+                    type: ToastType.ERROR,
+                    text: "Some error occurred. Please Try again"
+            });
             return;
         }
     }
 </script>
 
-<div class="w-screen h-screen bg-black-trans flex justify-center items-center absolute top-0 left-0 z-50 p-2">
-    <div class="w-fit h-fit bg-white flex flex-col justify-center rounded shadow-xl">
-        <div class="w-full flex justify-end h-0">
-            <button class="cursor-pointer relative p-1 text-3xl hover:text-white" onclick={() => shared.showRegisterDialog = false}>
-                <Icon icon="iconamoon:close-fill" />
-            </button>
-        </div>
+<div
+	class="bg-black-trans absolute top-0 left-0 z-50 flex h-screen w-screen items-center justify-center p-2"
+>
+	<div class="flex h-fit w-fit flex-col justify-center rounded bg-white shadow-xl">
+		<div class="flex h-0 w-full justify-end">
+			<button
+				class="relative cursor-pointer p-1 text-3xl hover:text-white"
+				onclick={() => (shared.showRegisterDialog = false)}
+			>
+				<Icon icon="iconamoon:close-fill" />
+			</button>
+		</div>
 
-        <div class="flex md:flex-row flex-col-reverse">
-        <div class="p-8 box">
-            <h2 class="text-2xl">Register</h2>
-            <form onsubmit={async () => send()} class="flex flex-col mt-8 gap-4">
-                <div class="flex flex-col">
-                    <label for="" class="text-sm">Create a Username</label>
-                    <input bind:value={username} type="text" class="w-64 rounded" required />
-                </div>
-                <div class="flex flex-col">
-                    <label for="" class="text-sm">Create a Password</label>
-                    <input bind:value={password} type="password" class="w-64 rounded" required />
-                </div>
-                <div class="flex flex-col">
-                    <label for="" class="text-sm">Confirm Password</label>
-                    <input bind:value={re_password} type="password" class="w-64 rounded" required />
-                </div>
-                <div class="flex items-end gap-2">
-                    <button type="submit" class="cursor-pointer rounded w-fit px-4 py-2 bg-accent-dark hover:bg-accent text-white">Register</button>
-                    <button type="button" onclick={() => {
-                        shared.showLoginDialog = true;
-                        shared.showRegisterDialog = false;
-                    }} class="cursor-pointer hover:underline">Login instead</button>
-                </div>
-        </form>
-        </div>
-        <div class="image inset-shadow md:w-32 rounded-r"></div>
-        </div>
-
-    </div>
+		<div class="flex flex-col-reverse md:flex-row">
+			<div class="box p-8">
+				<h2 class="text-2xl">Register</h2>
+				<form onsubmit={async () => send()} class="mt-8 flex flex-col gap-4">
+					<div class="flex flex-col">
+						<label for="" class="text-sm">Create a Username</label>
+						<input bind:value={username} type="text" class="w-64 rounded" required />
+					</div>
+					<div class="flex flex-col">
+						<label for="" class="text-sm">Create a Password</label>
+						<input bind:value={password} type="password" class="w-64 rounded" required />
+					</div>
+					<div class="flex flex-col">
+						<label for="" class="text-sm">Confirm Password</label>
+						<input bind:value={re_password} type="password" class="w-64 rounded" required />
+					</div>
+					<div class="flex items-end gap-2">
+						<button
+							type="submit"
+							class="bg-accent-dark hover:bg-accent w-fit cursor-pointer rounded px-4 py-2 text-white"
+							>Register</button
+						>
+						<button
+							type="button"
+							onclick={() => {
+								shared.showLoginDialog = true;
+								shared.showRegisterDialog = false;
+							}}
+							class="cursor-pointer hover:underline">Login instead</button
+						>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
 </div>
 
 <style>
-    .image{
-        background-image: url("bg-register.jpg");
-    }
-    
-    .inset-shadow {
-        box-shadow: inset 3px 0px 10px 0px black;
-    }
-
 </style>

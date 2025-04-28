@@ -1,10 +1,41 @@
 const express = require('express');
+const { createServer } = require('http');
 const { PrismaClient } = require('@prisma/client');
-const app = express();
+const cors = require('cors');
+const { Server } = require('socket.io');
 
+// server
+const app = express();
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+    cors: {
+        origin: "*",
+    }
+});
+
+// db client init
 const prisma = new PrismaClient();
 
 app.use(express.urlencoded());
+app.use(cors());
+
+// Socket conf for chat service
+io.on("connection", (socket) => {
+    console.log("New connection", socket.id);
+
+    const streamer = socket.handshake.query.streamer;
+    socket.join(streamer);
+
+    socket.on("chatmsg", (arg) => {
+        console.log(arg);
+        io.to(streamer).emit("chatbroadcast", arg);
+    });
+});
+
+// auth service for rtmp server
+app.get("/", function (req, res) {
+    res.status(200).send("This is the backend API for Switch livestreaming service.");
+})
 
 app.post("/auth", async function (req, res) {
     const streamkey = req.body.key;
@@ -34,10 +65,11 @@ app.post("/auth", async function (req, res) {
             console.log(update.isLive);
 
             res.status(200).send();
+        } else {
+            console.log("Streamkey does not match");
+            res.status(403).send();
         }
 
-        console.log("Streamkey does not match");
-        res.status(403).send();
 
     } catch(e){
         console.log("Auth Server: Some error occurred\n", e);
@@ -67,7 +99,7 @@ app.post("/stop", async function (req, res) {
     res.status(200).send();
 })
 
-app.listen(8000, function() {
+httpServer.listen(8000, '0.0.0.0', function() {
     console.log("Listening on port 8000");
 })
 

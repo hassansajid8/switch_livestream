@@ -1,1 +1,11 @@
-// place files you want to import through the `$lib` alias in this folder.
+
+
+// Types
+
+// Chat Type
+
+type ChatMsg = {
+    username: string,
+    text: string,
+    time: Date
+}
