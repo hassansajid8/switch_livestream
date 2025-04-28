@@ -103,3 +103,51 @@ httpServer.listen(8000, '0.0.0.0', function() {
     console.log("Listening on port 8000");
 })
 
+process.on('SIGTERM', async () => {
+    console.log("");
+    console.log("Server terminated. Initiating clean-up");
+    await cleanup();
+
+    httpServer.close(async () => {
+        console.log("Closing server and connections");
+        await prisma.$disconnect();
+
+        await io.$disconnect();
+
+        process.exit(0);
+    })
+})
+
+process.on("SIGINT", async () => {
+    console.log("");
+    console.log("Server terminated. Initiating clean-up");
+    await cleanup();
+
+    httpServer.close(() => {
+        console.log("Closing server and connections");
+        prisma.$disconnect();
+
+        process.exit(0);
+    })
+})
+
+
+async function cleanup(){
+    console.log("Performing clean-up before shutdown");
+
+    try{
+        const response = await prisma.user.updateMany({
+            where: {
+                isLive: true,
+            },
+            data: {
+                isLive: false
+            }
+        });
+
+        if(response.count > 0) console.log(`${response.count} rows updated to | isLive: false |`);
+    }catch(e){
+        console.log("Error performing clean-up", e);
+    }
+
+}
