@@ -5,6 +5,7 @@
 
 	const { data } = $props();
 	let streamkey = $state('-------');
+	let deletebtn: HTMLButtonElement;
 
 	async function fetchkey() {
 		const response = await fetch('/api/fetchkey', {
@@ -41,6 +42,17 @@
             console.log("error copying", e);
         }
     }
+
+	async function deleteacc () {
+		deletebtn.disabled = true;
+		setTimeout(() => {
+			createToast({
+				text: "Cannot delete account right now. Please try again later",
+				type: ToastType.ERROR
+			});
+			deletebtn.disabled = false;
+		}, 1500);
+	}
 </script>
 
 <div
@@ -95,8 +107,25 @@
 						{/if}
 					</div>
 				</div>
+
+				<div class="my-4 flex items-center justify-between">
+					<p class="text-md w-1/4">Followers</p>
+					<div class="flex min-w-72 items-center">
+						{data.user.followinfo.followers.length - 1}
+					</div>
+				</div>
+				<div class="my-4 flex items-center justify-between">
+					<p class="text-md w-1/4">Following</p>
+					<div class="flex min-w-72 items-center">
+						{data.user.followinfo.following.length - 1}
+					</div>
+				</div>
+			</div>
+			<div class="text-right">
+				<button class="bg-red-700 p-2 rounded text-white hover:bg-red-800 cursor-pointer disabled:bg-gray-300" onclick={deleteacc} bind:this={deletebtn}>Delete Account</button>
 			</div>
 		</div>
+
 	</div>
 </div>
 

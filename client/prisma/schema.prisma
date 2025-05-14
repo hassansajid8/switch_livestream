@@ -14,9 +14,11 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  username  String   @unique
+  id        String  @id @default(uuid())
+  username  String  @unique
   password  String
   streamkey String  @unique @default(uuid())
-  isLive    Boolean  @default(false)
+  isLive    Boolean @default(false)
+  following User[]  @relation("UserFollows")
+  followers User[]  @relation("UserFollows")
 }

@@ -7,6 +7,7 @@
 	import Toasts from '$lib/toaster/Toasts.svelte';
 	import { onMount } from 'svelte';
 	import AccountDetails from '../components/AccountDetails.svelte';
+	import LiveDetails from '../components/LiveDetails.svelte';
 
 	
 	let { children, data } = $props();
@@ -44,6 +45,9 @@
 	{/if}
 	{#if shared.showAccountDetails}
 		<AccountDetails data={data} />
+	{/if}
+	{#if shared.showLiveDetails}
+		<LiveDetails />
 	{/if}
 	{@render children()}
 </main>

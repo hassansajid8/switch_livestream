@@ -36,8 +36,9 @@
 			<p>switch</p>
 		</a>
 	</div>
-	<div class="pr-4">
+	<div class="pr-4 flex items-center gap-4">
 		{#if shared.isAuth}
+		<button class="border border-accent p-2 rounded hover:bg-gray-900 hover:border-accent-dark cursor-pointer" onclick={() => shared.showLiveDetails = true}>Go Live</button>
 			<div class="relative inline-block text-left">
 				<div>
 					<button

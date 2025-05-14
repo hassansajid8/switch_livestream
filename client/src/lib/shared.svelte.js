@@ -3,4 +3,5 @@ export const shared = $state({
     showRegisterDialog: false,
     showAccountDetails: false,
     isAuth: false,
+    showLiveDetails: false,
  });

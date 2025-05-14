@@ -12,7 +12,8 @@
 
     const { data } = $props();
 
-    const socket = io("http://localhost:8000", {
+    const socket = io(`http://${page.url.hostname}`, {
+        path: '/server/socket.io',
         query: {
             streamer: page.url.pathname
         }

@@ -17,10 +17,14 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
         console.log(verify);
         
         if(verify) {
-            user = {
-                id: verify.id,
-                username: verify.username
-            }
+            user = await prisma.user.findUnique({
+                where: {
+                    id: verify.id
+                },
+                include: {
+                    following: true
+                }
+            })
         }
     }
 
